@@ -1,9 +1,10 @@
-import type { ActionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useState } from "react";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useEffect, useRef, useState } from "react";
+import { useActionData } from "react-router";
 import { FormField } from "~/components/form-field";
 import { Layout } from "~/components/layout";
-import { login, register } from "~/utils/auth.server";
+import { getUser, login, register } from "~/utils/auth.server";
 
 import {
   validateEmail,
@@ -79,14 +80,40 @@ export async function action({ request }: ActionArgs) {
   }
 }
 
+export async function loader({ request }: LoaderArgs) {
+  return (await getUser(request)) ? redirect("/") : null;
+}
+
 type FormAction = "register" | "login";
 
+type ActionData = {
+  error?: string;
+  fields?: {
+    email?: string;
+    password?: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  errors?: {
+    email?: string;
+    password?: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  form?: string;
+};
+
 export default function Login() {
+  const actionData = useActionData() as ActionData;
+  const firstLoad = useRef(true);
+  const [errors, setErrors] = useState(actionData?.errors || {});
+  const [formError, setFormError] = useState(actionData?.error || "");
+
   const [formData, setFormData] = useState<FormState>({
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
+    email: actionData?.fields?.email || "",
+    password: actionData?.fields?.password || "",
+    firstName: actionData?.fields?.firstName || "",
+    lastName: actionData?.fields?.lastName || "",
   });
 
   const [action, setAction] = useState<FormAction>("login");
@@ -97,6 +124,27 @@ export default function Login() {
   ) => {
     setFormData((form) => ({ ...form, [field]: event.target.value }));
   };
+
+  useEffect(() => {
+    if (!firstLoad.current) {
+      const newState: FormState = {
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+      };
+      setErrors(newState);
+      setFormError("");
+      setFormData(newState);
+    }
+    console.log(firstLoad.current);
+  }, [action]);
+
+  useEffect(() => {
+    if (!firstLoad.current) {
+      setFormError("");
+    }
+  }, [formData]);
 
   return (
     <Layout>
@@ -120,11 +168,15 @@ export default function Login() {
           method="POST"
           className="rounded-2xl shadow-lg bg-yellow-300 p-6 w-96"
         >
+          <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
+            {formError}
+          </div>
           <FormField
             htmlFor="email"
             label="Email"
             value={formData.email}
             onChange={(e) => handleInputChange(e, "email")}
+            error={errors?.email}
           />
           <FormField
             htmlFor="password"
@@ -132,6 +184,7 @@ export default function Login() {
             type="password"
             value={formData.password}
             onChange={(e) => handleInputChange(e, "password")}
+            error={errors?.password}
           />
 
           {action === "register" && (
@@ -141,6 +194,7 @@ export default function Login() {
                 label="First Name"
                 value={formData.firstName}
                 onChange={(e) => handleInputChange(e, "firstName")}
+                error={errors?.firstName}
               />
 
               <FormField
@@ -148,6 +202,7 @@ export default function Login() {
                 label="Last Name"
                 value={formData.lastName}
                 onChange={(e) => handleInputChange(e, "lastName")}
+                error={errors?.lastName}
               />
             </>
           )}
