@@ -16,3 +16,14 @@ export async function createUser(user: RegisterFormInput) {
 
   return { id: newUser.id, email: user.email };
 }
+
+export async function getOtherUsers(userId: string) {
+  return db.user.findMany({
+    where: {
+      // id: { not: userId }
+    },
+    orderBy: {
+      firstName: "asc",
+    },
+  });
+}
