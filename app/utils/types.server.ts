@@ -4,3 +4,8 @@ export type RegisterFormInput = {
   firstName?: string;
   lastName?: string;
 };
+
+export type LoginFormInput = {
+  email: string;
+  password: string;
+};
