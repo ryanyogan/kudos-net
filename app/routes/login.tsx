@@ -14,8 +14,8 @@ import {
 type FormState = {
   email: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
 };
 
 export async function action({ request }: ActionArgs) {

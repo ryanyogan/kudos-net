@@ -20,6 +20,6 @@ model User {
   email    String @unique
   password String
 
-  firstName String?
-  lastName  String?
+  firstName String
+  lastName  String
 }
