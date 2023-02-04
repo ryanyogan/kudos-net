@@ -9,7 +9,9 @@ export function Kudo({
   kudo: Partial<IKudo>;
 }) {
   return (
-    <div className={`flex bg-white p-4 rounded-sm w-full gap-x-2 relative`}>
+    <div
+      className={`flex bg-white p-4 rounded-sm w-full gap-x-2 relative shadow-md`}
+    >
       <div>
         <UserCircle
           profile={{
