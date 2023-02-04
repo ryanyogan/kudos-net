@@ -6,7 +6,7 @@ export function UserPanel({ users }: { users: User[] }) {
   const navigate = useNavigate();
 
   return (
-    <div className="w-1/3 bg-yellow-300 flex flex-col">
+    <div className="w-1/3 sm:w-1/6 bg-yellow-300 flex flex-col">
       <div className="text-center h-20 flex items-center justify-center">
         <h2 className="text-2xl text-gray-800 font-bold">My Team</h2>
       </div>
