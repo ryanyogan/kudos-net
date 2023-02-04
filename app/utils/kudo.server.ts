@@ -29,3 +29,18 @@ export async function createKudo(
     },
   });
 }
+
+export async function getAllKudos() {
+  return db.kudo.findMany({
+    select: {
+      id: true,
+      message: true,
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
