@@ -43,7 +43,7 @@ export default function KudoModal() {
   const { recipient, user } = useLoaderData<typeof loader>();
 
   return (
-    <Modal isOpen={true} className="w-full p-10 m-2">
+    <Modal isOpen={true} className="w-full p-4 m-2">
       <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full mb-2">
         {formError}
       </div>
@@ -62,6 +62,18 @@ export default function KudoModal() {
             <p className="text-gray-800">
               {recipient?.firstName} {recipient?.lastName}
             </p>
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col gap-y-4 mt-4">
+          <textarea
+            name="message"
+            className="w-full rounded h-28 p-2"
+            value={formData.message}
+            onChange={(e) => handleChange(e, "message")}
+            placeholder={`Say something nice about ${recipient.firstName}...`}
+          />
+          <div className="flex flex-col items-center md:flex-row md:justify-start gap-x-4">
+            {/* Select Boxes Go Here */}
           </div>
         </div>
       </form>
