@@ -11,6 +11,27 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum Emoji {
+  THUMBSUP
+  PARTY
+  HANDSUP
+}
+
+enum Department {
+  MARKETING
+  SALES
+  ENGINEERING
+  HR
+}
+
+enum Color {
+  RED
+  GREEN
+  YELLOW
+  BLUE
+  WHITE
+}
+
 model User {
   id String @id @default(cuid())
 
@@ -22,4 +43,28 @@ model User {
 
   firstName String
   lastName  String
+
+  authorKudos Kudo[] @relation("AuthoredKudos")
+  kudos       Kudo[] @relation("ReceivedKudos")
+}
+
+model Kudo {
+  id String @id @default(cuid())
+
+  message String
+
+  backgroundColor Color @default(YELLOW)
+  textColor       Color @default(WHITE)
+  emoji           Emoji @default(THUMBSUP)
+
+  authorId String
+  author   User   @relation(references: [id], fields: [authorId], "AuthoredKudos")
+
+  recipientId String
+  recipient   User   @relation(references: [id], fields: [recipientId], "ReceivedKudos")
+
+  createdAt DateTime @default(now())
+
+  @@index([recipientId])
+  @@index([authorId])
 }
